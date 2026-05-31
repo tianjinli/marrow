@@ -1,0 +1,71 @@
+services:
+  # 1. 🗄️ 微软 SQL Server 数据库服务
+  mssql-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - MSSQL_SA_PASSWORD=poTP9YjMrLhVhm5B # 请替换为硬核高强度密码
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: always
+
+  # 2. 🟢 前台网站容器
+  web-front:
+    build:
+      context: ..
+      dockerfile: Deploy/RYFront/Dockerfile
+    container_name: web-front
+    restart: always
+    ports:
+      - "8180:80"
+    depends_on:
+      - mssql-db
+
+  # 3. 🔵 后台网站容器
+  web-admin:
+    build:
+      context: ..
+      dockerfile: Deploy/RYAdmin/Dockerfile
+    container_name: web-admin
+    restart: always
+    ports:
+      - "8181:80"
+    depends_on:
+      - mssql-db
+
+  # # 4. ⚡ WebProxy 反向代理网关
+  # web-gateway:
+  #   build:
+  #     context: ..
+  #     dockerfile: Deploy/WebProxy/Dockerfile
+  #   container_name: web-gateway
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - web-front
+  #     - web-admin
+  #   restart: always
+
+#  # 5. 🚀 游戏服务器 (直接将核心端口肉搏暴露给宿主机)
+#  game-server:
+#    build:
+#      context: ..
+#      dockerfile: Deploy/RYServer/Dockerfile
+#    container_name: game-server
+#    # 📢 满足要求：完美将 4 个核心游戏房间/登录网关端口穿透直接映射到宿主机
+#    ports:
+#      - "8600:8600"
+#      - "8610:8610"
+#      - "8620:8620"
+#      - "8630:8630"
+#      - "9001:9001"
+#    restart: always
+#    depends_on:
+#      - mssql-db
+
+volumes:
+  mssql_data:

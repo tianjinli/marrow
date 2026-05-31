@@ -1,0 +1,74 @@
+## -----------------------------
+## Visual Studio / .NET Framework
+## -----------------------------
+
+# 编译输出
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+
+# VS 临时文件
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS 生成的缓存
+.vs/
+*.cache
+*.dbmdl
+*.pdb
+
+# ASP.NET 临时文件
+App_Data/*.mdf
+App_Data/*.ldf
+App_Data/Temp/
+App_Data/Logs/
+
+# 发布输出（不要提交）
+_PrecompiledWeb/
+PublishedWebsites/
+**/Release/
+**/Debug/
+
+# 上传文件
+**/Upload/
+
+# WebForms 自动生成文件
+*.designer.cs
+*.designer.vb
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Resharper / Rider
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# IIS Express
+/.vs/config/applicationhost.config
+
+# Mono / Linux
+*.pid
+*.pidb
+*.mdb
+*.exe.mdb
+*.dll.mdb
+
+# WebProxy / Docker
+nginx/logs/
+logs/
+*.log
+docker-compose.override.yml
+
+# 其他不需要的文件
+Thumbs.db
+Desktop.ini
+*.bak
+*.tmp
+*.swp

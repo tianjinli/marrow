@@ -1,0 +1,1 @@
+@cd /d %~dp0 && powershell -ExecutionPolicy Bypass -File .\build_vcpkg.ps1

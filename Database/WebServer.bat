@@ -1,0 +1,1 @@
+@cd /d %~dp0 && powershell -ExecutionPolicy Bypass -File .\WebServer.ps1

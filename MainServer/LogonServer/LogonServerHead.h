@@ -1,0 +1,15 @@
+#pragma once
+
+//////////////////////////////////////////////////////////////////////////////////
+// 包含文件
+
+// 平台定义
+#include "GlobalDefine/Platform.h"
+#include "MessageDefine/CMD_Correspond.h"
+#include "MessageDefine/CMD_LogonServer.h"
+
+// 组件定义
+#include "KernelEngine/KernelEngineHead.h"
+#include "ServiceCore/ServiceCoreHead.h"
+
+//////////////////////////////////////////////////////////////////////////////////

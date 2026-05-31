@@ -1,0 +1,87 @@
+cmake_minimum_required(VERSION 3.15)
+project(MainServerRoot)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if (APPLE)
+    set(MSSystemDir "osx")
+    #OSX上强制生成so后缀的动态库而不是dylib后缀动态库
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+elseif (UNIX)
+    set(MSSystemDir "linux")
+else ()
+    set(MSSystemDir "windows")
+endif ()
+
+if (UNIX)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++20 -pthread -O0 -Wall -g -ggdb -DDEBUG")
+    else ()
+        set(CMAKE_BUILD_TYPE "Release")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++20 -pthread -O3 -Wall")
+    endif ()
+
+    set(LDFLAGS "$ENV{LDFLAGS} -stdlib=libc++")
+else ()
+    if (MSVC)
+        add_compile_options(/utf-8 /EHsc)
+        if (MSVC_VERSION LESS 1940)
+            message(STATUS "MSVC < 19.40 detected (VS2022). Enabling /await.")
+            add_compile_options(/await)
+            add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+        endif ()
+        add_compile_definitions(_X64 _WINDOWS NOMINMAX WIN32_LEAN_AND_MEAN _CRT_SECURE_NO_WARNINGS)
+    else ()
+        add_compile_options("-fexec-charset=UTF-8" "-finput-charset=UTF-8")
+        add_compile_definitions(_WINDOWS NOMINMAX WIN32_LEAN_AND_MEAN _CRT_SECURE_NO_WARNINGS)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -DDEBUG")
+        else ()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+        endif ()
+    endif ()
+endif ()
+
+set(MSFolderName "MainServer")
+set(MSProjectDir "${PROJECT_SOURCE_DIR}")
+
+set(MSOutBinDir "${CMAKE_CURRENT_SOURCE_DIR}/../_Out/bin/${CMAKE_BUILD_TYPE}/RYServer")
+set(MSOutLibDir "${CMAKE_CURRENT_SOURCE_DIR}/../_Out/lib/${CMAKE_BUILD_TYPE}")
+
+# 编译时绑定 so 路径
+set(CMAKE_BUILD_RPATH "$ORIGIN")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MSOutBinDir})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MSOutBinDir})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MSOutLibDir})
+
+set(MSLibraryDir "${MSOutLibDir}" "${PROJECT_SOURCE_DIR}/Dependencies/lib/${MSSystemDir}/${CMAKE_BUILD_TYPE}")
+set(MSIncludeDir "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/Dependencies/include/${MSSystemDir}")
+
+message(STATUS "MSIncludeDir:${MSIncludeDir}")
+message(STATUS "MSLibraryDir:${MSLibraryDir}")
+
+add_compile_definitions(FMT_HEADER_ONLY=1)
+
+# 以下两个尚未找到合适的替换
+include_directories(${MSIncludeDir})
+link_directories(${MSLibraryDir})
+
+add_subdirectory(Benchmark)
+add_subdirectory(ChatServer)
+add_subdirectory(Collocates)
+add_subdirectory(Correspond)
+add_subdirectory(GameServer)
+add_subdirectory(GameService)
+add_subdirectory(KernelEngine)
+add_subdirectory(LogonServer)
+add_subdirectory(MatchService)
+add_subdirectory(ModuleManager)
+add_subdirectory(PersonalRoomCorrespond)
+add_subdirectory(PersonalRoomService)
+add_subdirectory(ServiceCore)
